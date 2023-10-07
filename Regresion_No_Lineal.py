@@ -30,4 +30,12 @@ y_limite_credito = credicel["limite_credito"]
 #porc_eng
     #costo_total
 
-#
+#limite_credito
+    #precio
+
+x_score_buro = credicel["score_buro"]
+x_edad_cliente_edad = credicel_edad["edad_cliente"]
+x_costo_total = credicel["costo_total"]
+x_precio = credicel["precio"]
+
+
