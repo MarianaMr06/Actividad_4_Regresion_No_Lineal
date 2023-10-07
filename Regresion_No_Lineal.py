@@ -10,7 +10,7 @@ import math
 
 #Carga de Archivos
 credicel = pd.read_excel("Copia de df_limpio.xlsx")
-credicel.info()
+# credicel.info()
 
 #Relaciones
     #riesgo
@@ -25,27 +25,27 @@ credicel.info()
 
 #Base riesgo y score
 credicel_riesgo_score = credicel[(credicel["riesgo"] > 0) & (credicel["score_buro"] > 0)]
-print("CREDICEL RIESGO SCORE", credicel_riesgo_score.head())
+# print("CREDICEL RIESGO SCORE", credicel_riesgo_score.head())
 
 #Base riesgo y precio
 credicel_riesgo_precio = credicel[(credicel["riesgo"] > 0) & (credicel["precio"] > 0)]
-print("CREDICEL RIESGO PRECIO", credicel_riesgo_precio.head())
+# print("CREDICEL RIESGO PRECIO", credicel_riesgo_precio.head())
 
 #Base riesgo y costo_total
 credicel_riesgo_costo_total = credicel[(credicel["riesgo"] > 0) & (credicel["costo_total"] > 0)]
-print("CREDICEL RIESGO COSTO TOTAL", credicel_riesgo_costo_total.head())
+# print("CREDICEL RIESGO COSTO TOTAL", credicel_riesgo_costo_total.head())
 
 #Base riesgo y monto_financiado
 credicel_riesgo_monto_financiado = credicel[(credicel["riesgo"] > 0) & (credicel["monto_financiado"] > 0)]
-print("CREDICEL RIESGO MONTO FINANCIADO", credicel_riesgo_monto_financiado.head())
+# print("CREDICEL RIESGO MONTO FINANCIADO", credicel_riesgo_monto_financiado.head())
 
 #Base riesgo y puntos
 credicel_riesgo_puntos = credicel[(credicel["riesgo"] > 0) & (credicel["puntos"] > 0)]
-print("CREDICEL RIESGO PUNTOS", credicel_riesgo_puntos.head())
+# print("CREDICEL RIESGO PUNTOS", credicel_riesgo_puntos.head())
 
 #Base sin edad negativa o 0s y score 
 credicel_edad = credicel[(credicel["edad_cliente"] >= 0) & (credicel["score_buro"] > 0)]
-print("CREDICEL EDAD SCORE", credicel_edad.head())
+# print("CREDICEL EDAD SCORE", credicel_edad.head())
 
 #Definimos variables
 y_riesgo_score = credicel_riesgo_score["riesgo"]
@@ -94,6 +94,8 @@ def funcion_logaritmica (x, a, b):
 def funcion_polinomial_inversa (x, a, b, c):
     return a/b*x**2 + c*x
 
+print("MODELOS PARA RIESGO")
+
 #MODELOS de RIESGO
 #Riesgo y Score Buró funcion cuadratica
 print("CORRELACION RIESGO Y SCORE BURO")
@@ -104,7 +106,7 @@ parametros, _ = curve_fit(funcion_cuadratica, x_riesgo_score, y_riesgo_score)
 a, b, c = parametros[0], parametros[1], parametros[2]
 modelo_riesgo_buro = a * x_riesgo_score ** 2 + b * x_riesgo_score + c
 R2_modelo_riesgo_score = r2_score(y_riesgo_score, modelo_riesgo_buro)
-print("R2: ", R2_modelo_riesgo_score)
+print("R2: del modelo Riesgo Score", R2_modelo_riesgo_score)
 
 # Riesgo y precio
 #Arreglos a Numpy
@@ -149,3 +151,61 @@ a, b, c = parametros[0], parametros[1], parametros[2]
 modelo_riesgo_costo_total = a/b*x_riesgo_costo_total**2 + c*x_riesgo_costo_total
 R2_modelo_riesgo_costo_total = r2_score(y_riesgo_costo_total, modelo_riesgo_costo_total)
 print("R2 para el modelo Riesgo Monto financiado:", R2_modelo_riesgo_costo_total)
+
+print("MODELOS PARA SCORE")
+
+#MODELOS de SCORE
+#Score y edad funcion cuadratica
+print("CORRELACION SCORE BURO Y EDAD, CUADRATICO")
+parametros, covs = curve_fit(funcion_cuadratica, x_edad_score, y_edad_score)
+print("Parametros: ", parametros)
+    #modelo
+parametros, _ = curve_fit(funcion_cuadratica, x_edad_score, y_edad_score)
+a, b, c = parametros[0], parametros[1], parametros[2]
+modelo_edad_score = a * x_edad_score ** 2 + b * x_edad_score + c
+R2_modelo_edad_score = r2_score(y_edad_score, modelo_edad_score)
+print("R2 para el modelo Score Buró y Edad, cuadrático: ", R2_modelo_edad_score)
+
+# Score y edad
+#Arreglos a Numpy
+x_edad_score = np.array(x_edad_score)
+y_edad_score = np.array(y_edad_score)
+print("CORRELACION SCORE BURO Y EDAD, EXPONENCIAL")
+parametros, covs = curve_fit(funcion_exponencial, x_edad_score, y_edad_score)
+print("Parámetros: ", parametros)
+# Modelo
+parametros, _ = curve_fit(funcion_exponencial, x_edad_score, y_edad_score)
+a, b, c = parametros[0], parametros[1], parametros[2]
+modelo_edad_score = a * np.exp(b * x_edad_score) + c
+R2_modelo_edad_score = r2_score(y_edad_score, modelo_edad_score)
+print("R2 del modelo Score Buró y Edad, exponencial: ", R2_modelo_edad_score)
+
+#Score y edad
+print("CORRELACION SCORE BURO Y EDAD, INVERSA")
+parametros, covs = curve_fit(funcion_inversa, x_edad_score, y_edad_score)
+print("Parámetros: ", parametros)
+# Modelo
+a = parametros
+modelo_edad_score = 1/a*x_edad_score
+R2_modelo_edad_score = r2_score(y_edad_score, modelo_edad_score)
+print("R2 para el modelo Score Buró y Edad, inversa: ", R2_modelo_edad_score)
+
+#Score y edad
+print("CORRELACION SCORE BURO Y EDAD, LOGARITMICA")
+parametros, covs = curve_fit(funcion_logaritmica, x_edad_score, y_edad_score)
+print("Parámetros: ", parametros)
+# Modelo
+a, b = parametros[0], parametros[1]
+modelo_edad_score = a * np.log(x_edad_score)+b
+R2_modelo_edad_score = r2_score(y_edad_score, modelo_edad_score)
+print("R2 para el modelo Score Buró y Edad, logarítmica: ", R2_modelo_edad_score)
+
+#Score y edad
+print("CORRELACION SCORE BURO Y EDAD, POLINOMIAL INVERSA")
+parametros, covs = curve_fit(funcion_polinomial_inversa, x_edad_score, y_edad_score)
+print("Parámetros: ", parametros)
+# Modelo
+a, b, c = parametros[0], parametros[1], parametros[2]
+modelo_edad_score = a/b*x_edad_score**2 + c*x_edad_score
+R2_modelo_edad_score = r2_score(y_edad_score, modelo_edad_score)
+print("R2 para el modelo Score Buró y Edad, polinomial inversa: ", R2_modelo_edad_score)
