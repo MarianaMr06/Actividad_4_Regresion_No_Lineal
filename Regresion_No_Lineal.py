@@ -150,7 +150,7 @@ print("Parámetros: ", parametros)
 a, b, c = parametros[0], parametros[1], parametros[2]
 modelo_riesgo_costo_total = a/b*x_riesgo_costo_total**2 + c*x_riesgo_costo_total
 R2_modelo_riesgo_costo_total = r2_score(y_riesgo_costo_total, modelo_riesgo_costo_total)
-print("R2 para el modelo Riesgo Monto financiado:", R2_modelo_riesgo_costo_total)
+print("R2 para el modelo Riesgo Costo total: ", R2_modelo_riesgo_costo_total)
 
 print("MODELOS PARA SCORE")
 
